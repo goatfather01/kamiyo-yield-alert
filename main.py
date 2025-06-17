@@ -16,11 +16,16 @@ def get_apy_data():
         url = "https://api.kamino.finance/vaults/v2?category=multiply"
         response = requests.get(url)
         response.raise_for_status()
-        data = response.json()
 
-        # DEBUG: send back raw keys from vaults
-        vault_symbols = [vault.get("symbol") for vault in data]
-        bot.send_message(chat_id=CHAT_ID, text=f"🔍 Vaults found: {vault_symbols}")
+        try:
+            data = response.json()
+        except Exception as json_err:
+            bot.send_message(chat_id=CHAT_ID, text=f"❌ JSON parse error: {json_err}")
+            return None, None, None
+
+        # Send the first few vaults as debug
+        sample = data[:3] if isinstance(data, list) else data
+        bot.send_message(chat_id=CHAT_ID, text=f"📦 Raw API preview:\n{sample}")
 
         for vault in data:
             if vault.get("symbol") == "JUPSOL/SOL":
