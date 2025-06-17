@@ -8,13 +8,13 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-
 bot = Bot(token=BOT_TOKEN)
 
 def get_apy_data():
     try:
-        url = "https://api.kamino.finance/vaults"
+        url = "https://api.kamino.finance/vaults/v2?category=multiply"
         response = requests.get(url)
+        response.raise_for_status()  # Raise HTTP error if failed
         data = response.json()
 
         for vault in data:
@@ -24,33 +24,35 @@ def get_apy_data():
                 spread = lst_apy - borrow_apy
                 return lst_apy, borrow_apy, spread
 
-        print("⚠️ JUPSOL/SOL vault not found.")
         return None, None, None
-
     except Exception as e:
-        print("⚠️ API exception:", e)
+        bot.send_message(chat_id=CHAT_ID, text=f"❌ API Error: {e}")
         return None, None, None
 
 def send_alert():
     lst_apy, borrow_apy, spread = get_apy_data()
+
+    # Force debug output to Telegram
     if lst_apy is None:
-        bot.send_message(chat_id=CHAT_ID, text="⚠️ Failed to fetch Kamino data.")
+        bot.send_message(chat_id=CHAT_ID, text="⚠️ No data returned or vault not found.")
         return
 
     message = f"""
-🧠 JUPSOL/SOL Yield Report ({datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}):
-• JUPSOL APY: {lst_apy:.2f}%
-• SOL Borrow APY: {borrow_apy:.2f}%
-• Spread: {spread:.2f}%
+🔍 DEBUG: JUPSOL/SOL Yield
+Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
+JUPSOL APY: {lst_apy:.2f}%
+SOL Borrow APY: {borrow_apy:.2f}%
+Spread: {spread:.2f}%
 """
 
     if spread <= 0:
-        message += "🚨 **NEGATIVE YIELD!** You’re losing money. Consider exiting."
+        message += "🚨 NEGATIVE YIELD – consider exiting!"
     elif spread < 1:
-        message += "⚠️ **Warning:** Spread < 1%. Close to turning negative."
+        message += "⚠️ Warning: Spread < 1%"
     else:
-        message += "✅ Everything looks good. You're in the green."
+        message += "✅ All good."
 
     bot.send_message(chat_id=CHAT_ID, text=message)
 
+# Run once immediately
 send_alert()
