@@ -18,6 +18,10 @@ def get_apy_data():
         response.raise_for_status()
         data = response.json()
 
+        # DEBUG: send back raw keys from vaults
+        vault_symbols = [vault.get("symbol") for vault in data]
+        bot.send_message(chat_id=CHAT_ID, text=f"🔍 Vaults found: {vault_symbols}")
+
         for vault in data:
             if vault.get("symbol") == "JUPSOL/SOL":
                 lst_apy = float(vault["lstApy"]) * 100
@@ -27,6 +31,7 @@ def get_apy_data():
 
         return None, None, None
     except Exception as e:
+        bot.send_message(chat_id=CHAT_ID, text=f"❌ API Exception: {e}")
         return None, None, None
 
 async def send_alert():
