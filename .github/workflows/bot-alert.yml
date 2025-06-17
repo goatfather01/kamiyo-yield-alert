@@ -1,0 +1,29 @@
+name: Kamino Yield Alert Bot
+
+on:
+  schedule:
+    # Run at 10AM and 10PM Malaysia Time (UTC+8) => convert to UTC: 2AM and 2PM
+    - cron: '0 2,14 * * *'
+  workflow_dispatch:  # Allow manual trigger from GitHub if needed
+
+jobs:
+  send-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install python-telegram-bot requests
+
+    - name: Run alert bot
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
+      run: python main.py
