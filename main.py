@@ -11,8 +11,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 bot = Bot(token=BOT_TOKEN)
 
-# Replace with actual tokenMint for JUPSOL if available
-JUPSOL_MINT = "mSoLzYCxHdYgdzU16g50Sh3i5K3z3KZK7ytfqcJm7So"
+# ✅ Correct JUPSOL tokenMint
+JUPSOL_MINT = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"
 
 # --- Kamino Staking Yield API Call ---
 def get_jupsol_apy():
