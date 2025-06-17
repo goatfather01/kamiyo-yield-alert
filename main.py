@@ -1,6 +1,7 @@
 import requests
 import os
 import datetime
+import asyncio
 from telegram import Bot
 from dotenv import load_dotenv
 
@@ -14,7 +15,7 @@ def get_apy_data():
     try:
         url = "https://api.kamino.finance/vaults/v2?category=multiply"
         response = requests.get(url)
-        response.raise_for_status()  # Raise HTTP error if failed
+        response.raise_for_status()
         data = response.json()
 
         for vault in data:
@@ -26,33 +27,36 @@ def get_apy_data():
 
         return None, None, None
     except Exception as e:
-        bot.send_message(chat_id=CHAT_ID, text=f"❌ API Error: {e}")
         return None, None, None
 
-def send_alert():
-    lst_apy, borrow_apy, spread = get_apy_data()
+async def send_alert():
+    try:
+        lst_apy, borrow_apy, spread = get_apy_data()
+    except Exception as e:
+        await bot.send_message(chat_id=CHAT_ID, text=f"❌ API exception: {e}")
+        return
 
-    # Force debug output to Telegram
+    await bot.send_message(chat_id=CHAT_ID, text="✅ Bot test: I'm alive and connected!")
+
     if lst_apy is None:
-        bot.send_message(chat_id=CHAT_ID, text="⚠️ No data returned or vault not found.")
+        await bot.send_message(chat_id=CHAT_ID, text="⚠️ Failed to fetch Kamino data or vault not found.")
         return
 
     message = f"""
-🔍 DEBUG: JUPSOL/SOL Yield
-Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
-JUPSOL APY: {lst_apy:.2f}%
-SOL Borrow APY: {borrow_apy:.2f}%
-Spread: {spread:.2f}%
+🧠 JUPSOL/SOL Yield Report ({datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}):
+• JUPSOL APY: {lst_apy:.2f}%
+• SOL Borrow APY: {borrow_apy:.2f}%
+• Spread: {spread:.2f}%
 """
 
     if spread <= 0:
-        message += "🚨 NEGATIVE YIELD – consider exiting!"
+        message += "🚨 NEGATIVE YIELD! Consider exiting."
     elif spread < 1:
         message += "⚠️ Warning: Spread < 1%"
     else:
-        message += "✅ All good."
+        message += "✅ You're in the green."
 
-    bot.send_message(chat_id=CHAT_ID, text=message)
+    await bot.send_message(chat_id=CHAT_ID, text=message)
 
-# Run once immediately
-send_alert()
+# Trigger immediately when the script runs
+asyncio.run(send_alert())
