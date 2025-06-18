@@ -3,7 +3,8 @@ name: Kamino Yield Alert Bot
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 14 * * *'  # TEMP: Set this to 2–3 minutes from now UTC time
+    - cron: '0 1 * * *'  # 9:00 AM MYT (01:00 UTC)
+    - cron: '0 14 * * *' # 10:00 PM MYT (14:00 UTC)
 
 jobs:
   send-alert:
