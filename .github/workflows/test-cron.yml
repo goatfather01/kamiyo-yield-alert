@@ -1,0 +1,12 @@
+name: Cron Test
+
+on:
+  schedule:
+    - cron: '* * * * *'  # Every 1 minute UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show timestamp
+        run: echo "🕒 Cron test triggered at $(date -u)"
