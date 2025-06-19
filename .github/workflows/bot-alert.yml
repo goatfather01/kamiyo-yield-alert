@@ -11,8 +11,8 @@ on:
   
   # Schedule the run
   schedule:
-    # Runs at 01:35 UTC (9:35 AM MYT)
-    - cron: '35 1 * * *'
+    # This is the test schedule. It will run at 03:36 UTC (11:36 AM MYT).
+    - cron: '36 3 * * *'
     # Runs at 14:00 UTC (10:00 PM MYT)
     - cron: '0 14 * * *'
 
