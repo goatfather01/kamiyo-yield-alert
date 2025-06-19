@@ -4,7 +4,7 @@ on:
   push:                     # ✅ Helps GitHub register the workflow
   workflow_dispatch:        # ✅ Allows manual or API trigger
   schedule:
-    - cron: '25 1 * * *'     # ✅ 9:00 AM MYT (01:00 UTC)
+    - cron: '35 1 * * *'     # ✅ 9:00 AM MYT (01:00 UTC)
     - cron: '0 14 * * *'    # ✅ 10:00 PM MYT (14:00 UTC)
 
 jobs:
