@@ -3,21 +3,22 @@ import os
 import datetime
 import asyncio
 from telegram import Bot
-from dotenv import load_dotenv
 
-load_dotenv()
+print("🔁 Kamino bot starting...")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
+
+print(f"BOT_TOKEN is {'✅ SET' if BOT_TOKEN else '❌ MISSING'}")
+print(f"CHAT_ID is {'✅ SET' if CHAT_ID else '❌ MISSING'}")
+
 bot = Bot(token=BOT_TOKEN)
 
-# ✅ Correct JUPSOL tokenMint
+# ✅ JUPSOL tokenMint
 JUPSOL_MINT = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"
-# ✅ Kamino market/reserve pubkeys for SOL borrow rate
 MARKET_PUBKEY = "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF"
 RESERVE_PUBKEY = "d4A2prbA2whesmvHaL88BH6Ewn5N4bTSU2Ze8P6Bc4Q"
 
-# --- JUPSOL APY from staking-yields API ---
 def get_jupsol_apy():
     try:
         url = "https://api.kamino.finance/v2/staking-yields"
@@ -33,7 +34,6 @@ def get_jupsol_apy():
     except Exception as e:
         return f"❌ JUPSOL APY API Error: {e}"
 
-# --- SOL Borrow Rate using historical metrics endpoint ---
 def get_sol_borrow_apy():
     try:
         today = datetime.date.today()
@@ -59,19 +59,22 @@ def get_sol_borrow_apy():
     except Exception as e:
         return f"❌ SOL Borrow APY API Error: {e}"
 
-# --- Telegram Bot Alert ---
 async def send_alert():
     jupsol_apy = get_jupsol_apy()
     sol_borrow_apy = get_sol_borrow_apy()
 
     if isinstance(jupsol_apy, str):
+        print(jupsol_apy)
         await bot.send_message(chat_id=CHAT_ID, text=jupsol_apy)
         return
     if isinstance(sol_borrow_apy, str):
+        print(sol_borrow_apy)
         await bot.send_message(chat_id=CHAT_ID, text=sol_borrow_apy)
         return
     if jupsol_apy is None or sol_borrow_apy is None:
-        await bot.send_message(chat_id=CHAT_ID, text="⚠️ Missing APY data from Kamino.")
+        warning = "⚠️ Missing APY data from Kamino."
+        print(warning)
+        await bot.send_message(chat_id=CHAT_ID, text=warning)
         return
 
     spread = jupsol_apy - sol_borrow_apy
@@ -90,7 +93,10 @@ async def send_alert():
     else:
         message += "✅ All good – you're in profit."
 
+    print("✅ Sending Telegram alert...")
     await bot.send_message(chat_id=CHAT_ID, text=message)
 
-# Run it immediately for GitHub Actions
-asyncio.run(send_alert())
+try:
+    asyncio.run(send_alert())
+except Exception as e:
+    print("❌ Fatal Error in bot:", e)
