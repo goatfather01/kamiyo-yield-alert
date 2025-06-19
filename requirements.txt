@@ -1,4 +1,1 @@
-# requirements.txt
 requests
-# We are removing python-telegram-bot because we can do this with just requests
-# We are removing python-dotenv because it's not needed in GitHub Actions
