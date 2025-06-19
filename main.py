@@ -13,6 +13,7 @@ CHAT_ID = os.getenv("CHAT_ID")
 JUPSOL_MINT = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"
 MARKET_PUBKEY = "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF"
 RESERVE_PUBKEY = "d4A2prbA2whesmvHaL88BH6Ewn5N4bTSU2Ze8P6Bc4Q"
+KAMINO_URL = "https://app.kamino.finance/earn/multiply/7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF/DGQZWCY17gGtBUgdaFs1VreJWsodkjFxndPsskwFKGpp/d4A2prbA2whesmvHaL88BH6Ewn5N4bTSU2Ze8P6Bc4Q"
 # --- End Configuration ---
 
 
@@ -29,7 +30,7 @@ def send_telegram_message(message):
     payload = {
         'chat_id': CHAT_ID,
         'text': message,
-        'parse_mode': 'Markdown'  # Optional: for formatting like *bold*
+        'parse_mode': 'Markdown'  # This enables the hyperlink formatting
     }
     
     try:
@@ -102,6 +103,9 @@ if __name__ == "__main__":
             message += "⚠️ *Warning: Spread < 1%* – monitor closely."
         else:
             message += "✅ *All good* – you're in profit."
+        
+        # Add the hyperlink
+        message += f"\n\n[Website Click Here]({KAMINO_URL})"
         
         send_telegram_message(message)
 
