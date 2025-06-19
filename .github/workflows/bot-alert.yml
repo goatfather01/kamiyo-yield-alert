@@ -1,21 +1,19 @@
+# .github/workflows/bot-alert.yml
+
 name: Kamino Yield Alert Bot
 
+# This is the "WHEN to run" section
 on:
-  # Trigger on pushes to the main branch
   push:
     branches:
       - main
-  
-  # Allow manual trigger from the Actions tab (great for testing)
   workflow_dispatch:
-  
-  # Schedule the run
   schedule:
-    # This is the test schedule. It will run at 03:36 UTC (11:36 AM MYT).
-    - cron: '36 3 * * *'
-    # Runs at 14:00 UTC (10:00 PM MYT)
-    - cron: '0 14 * * *'
+    # TEST: Runs at 04:00 UTC (12:00 PM MYT)
+    - cron: '0 4 * * *'
 
+# --- THIS PART IS ESSENTIAL ---
+# This is the "WHAT to do" section
 jobs:
   send-alert:
     runs-on: ubuntu-latest
@@ -29,17 +27,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      # Combines both pip steps into one for slightly faster execution
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # The python-dotenv install step is removed because it's in requirements.txt
-
       - name: Run alert bot
         env:
-          # These secrets are passed to the python script as environment variables
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python main.py
