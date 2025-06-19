@@ -1,19 +1,19 @@
-# .github/workflows/bot-alert.yml
+# .github/workflows/kamino_bot.yml
 
 name: Kamino Yield Alert Bot
 
-# This is the "WHEN to run" section
+# NEW "on" SECTION
 on:
+  # This lets you still run it with a push
   push:
     branches:
       - main
+  # This lets you still run it manually
   workflow_dispatch:
-  schedule:
-    # TEST: Runs at 04:00 UTC (12:00 PM MYT)
-    - cron: '0 4 * * *'
-
-# --- THIS PART IS ESSENTIAL ---
-# This is the "WHAT to do" section
+  # THIS IS THE NEW TRIGGER FOR THE EXTERNAL CRON JOB
+  repository_dispatch:
+    types: [daily-alert] # We will use this event name later
+    
 jobs:
   send-alert:
     runs-on: ubuntu-latest
