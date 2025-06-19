@@ -93,7 +93,7 @@ if __name__ == "__main__":
             f"📊 *JUPSOL/SOL Yield Report* ({datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')})\n"
             f"• JUPSOL APY: `{jupsol_apy:.2f}%`\n"
             f"• SOL Borrow APY: `{sol_borrow_apy:.2f}%`\n"
-            f"• *Net Spread: `{spread:.2f}%`*\n\n"
+            f"• *Net Spread: {spread:.2f}%*\n\n"
         )
 
         if spread <= 0:
